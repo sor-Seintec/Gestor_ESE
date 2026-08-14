@@ -84,61 +84,41 @@
             justify-content: flex-end;
             align-items: center;
             padding: 16px 32px;
-            gap: 20px;
             background: transparent;
             position: relative;
             z-index: 10;
         }
 
-        .status-badge {
+        .logout-btn {
             display: flex;
             align-items: center;
-            gap: 6px;
-            padding: 6px 16px;
-            background-color: #ffffff;
-            border: 1px solid var(--border);
-            border-radius: 50px;
-            font-size: 14px;
-            font-weight: 500;
+            gap: 12px;
             color: var(--text-muted);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-
-        .status-badge .material-symbols-outlined {
-            font-size: 18px;
-            color: #16a34a;
-        }
-
-        .nav-icons {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            color: var(--text-muted);
-        }
-
-        .nav-icons .material-symbols-outlined {
             cursor: pointer;
             transition: color 0.2s;
-            font-size: 26px;
         }
-        
-        .nav-icons .material-symbols-outlined:hover {
-            color: var(--text-main);
+
+        .logout-btn:hover {
+            color: #ef4444; /* Fica vermelho ao passar o mouse */
+        }
+
+        .logout-btn:hover .avatar {
+            background-color: #ef4444;
         }
 
         .avatar {
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background-color: #0f172a; /* Dark background as in the image */
+            background-color: #0f172a; 
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
             font-size: 16px;
-            cursor: pointer;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: background-color 0.2s;
         }
 
         /* HERO SECTION (Estilo Google Antigravity) */
@@ -169,51 +149,7 @@
             font-weight: 700;
             letter-spacing: -0.02em;
             color: var(--primary);
-            margin: 0 0 40px 0;
-        }
-
-        /* BOTÕES MODERNOS (Pílulas da Imagem) */
-        .hero-buttons {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .btn-modern {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 14px 28px;
-            border-radius: 50px;
-            font-size: 15px;
-            font-weight: 500;
-            text-decoration: none;
-            transition: transform 0.2s, box-shadow 0.2s;
-            cursor: pointer;
-            border: none;
-            font-family: inherit;
-        }
-
-        .btn-dark {
-            background-color: #111827; /* Dark slate */
-            color: #ffffff;
-        }
-
-        .btn-dark:hover {
-            box-shadow: 0 6px 16px rgba(17, 24, 39, 0.2);
-            transform: translateY(-1px);
-        }
-
-        .btn-light {
-            background-color: #ffffff;
-            color: #111827;
-            border: 1px solid #e5e7eb;
-        }
-
-        .btn-light:hover {
-            background-color: #f9fafb;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin: 0;
         }
 
         /* GRID DE MÓDULOS (CARDS) */
@@ -329,37 +265,19 @@
 
     <!-- Navegação Superior -->
     <div class="top-nav">
-        <div class="status-badge">
-            <span class="material-symbols-outlined">cloud_done</span>
-            Status: Sincronizado
+        <!-- Botão de Sair com o Avatar -->
+        <div class="logout-btn" title="Sair do sistema" onclick="logoutUser()">
+            <span style="font-weight: 600; font-size: 14px;">Sair</span>
+            <span class="material-symbols-outlined" style="font-size: 20px;">logout</span>
+            <div class="avatar" id="userAvatar">--</div>
         </div>
-        <div class="nav-icons">
-            <span class="material-symbols-outlined">notifications</span>
-            <span class="material-symbols-outlined">apps</span>
-        </div>
-        <!-- O Avatar agora exibe as iniciais dinamicamente pelo JS -->
-        <div class="avatar" id="userAvatar" title="Deslogar" onclick="logoutUser()">--</div>
     </div>
 
     <!-- Seção Hero com Efeito -->
     <div class="hero-section">
         <!-- Canvas para as partículas -->
         <canvas id="particle-canvas"></canvas>
-
         <h1 class="hero-title">Portal URE</h1>
-
-        <div class="hero-buttons">
-            <a href="Supervisor_Ure.html" class="btn-modern btn-dark">
-                <span class="material-symbols-outlined" style="font-size: 20px;">smartphone</span>
-                Acessar Coletor (App)
-            </a>
-            <button class="btn-modern btn-light">
-                Busca de Supervisão
-            </button>
-            <button class="btn-modern btn-light">
-                Ações Rápidas
-            </button>
-        </div>
     </div>
 
     <!-- Modulos (Cards) -->
@@ -463,7 +381,6 @@
 
                 const avatarEl = document.getElementById('userAvatar');
                 avatarEl.textContent = initials;
-                avatarEl.title = `Logado como: ${email} (Clique para sair)`;
 
             } else {
                 // Não está logado: bloqueia o portal
