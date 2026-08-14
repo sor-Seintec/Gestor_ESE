@@ -251,10 +251,6 @@
                 <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" alt="Google">
                 Entrar com o Google
             </button>
-            <button id="btnMicrosoftLogin" class="btn-social">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/microsoft.svg" width="18" alt="Microsoft">
-                Entrar com a Microsoft
-            </button>
             <div class="divider">ou use e-mail e senha</div>
             <input type="email" id="loginEmail" class="login-input" placeholder="Seu e-mail">
             <input type="password" id="loginPassword" class="login-input" placeholder="Sua senha">
@@ -326,7 +322,7 @@
     <!-- FIREBASE AUTH LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, OAuthProvider, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         // MANTENHA A MESMA CONFIGURAÇÃO USADA NO COLETOR
         const firebaseConfig = {
@@ -351,9 +347,6 @@
 
         document.getElementById('btnGoogleLogin').addEventListener('click', () => { 
             signInWithPopup(auth, new GoogleAuthProvider()).catch(e=>alert(e.message)); 
-        });
-        document.getElementById('btnMicrosoftLogin').addEventListener('click', () => { 
-            signInWithPopup(auth, new OAuthProvider('microsoft.com')).catch(e=>alert(e.message)); 
         });
         
         document.getElementById('btnEmailLogin').addEventListener('click', () => {
