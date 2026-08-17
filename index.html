@@ -69,12 +69,12 @@
 
         /* ================= BARRA LATERAL (SIDEBAR) AUMENTADA ================= */
         .sidebar {
-            width: 280px; /* Mais larga para acomodar fontes maiores */
+            width: 280px; 
             background-color: var(--bg-sidebar);
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            padding: 24px 20px; /* Maior espaçamento interno */
+            padding: 24px 20px; 
             flex-shrink: 0;
             justify-content: space-between;
         }
@@ -82,11 +82,11 @@
         .logo-area {
             display: flex; align-items: center; gap: 12px; margin-bottom: 35px; padding: 0 8px;
         }
-        .logo-area .material-symbols-outlined { font-size: 32px; color: var(--primary); } /* Ícone Logo maior */
-        .logo-text h2 { font-family: 'Outfit', sans-serif; font-size: 22px; margin: 0; color: var(--text-dark); } /* Texto Logo maior */
+        .logo-area .material-symbols-outlined { font-size: 32px; color: var(--primary); } 
+        .logo-text h2 { font-family: 'Outfit', sans-serif; font-size: 22px; margin: 0; color: var(--text-dark); } 
         .logo-text span { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
 
-        .nav-menu { display: flex; flex-direction: column; gap: 6px; } /* Mais espaço entre os itens */
+        .nav-menu { display: flex; flex-direction: column; gap: 6px; } 
         
         .nav-category {
             margin: 20px 0 8px 12px;
@@ -99,11 +99,11 @@
 
         .nav-item {
             display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-radius: var(--radius-md);
-            color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 15px; transition: 0.2s; /* Fonte e paddings maiores */
+            color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 15px; transition: 0.2s; 
         }
         .nav-item:hover { background-color: #f8fafc; color: var(--text-dark); }
         .nav-item.active { background-color: var(--sidebar-active); color: var(--sidebar-active-txt); font-weight: 600; }
-        .nav-item .material-symbols-outlined { font-size: 22px; } /* Ícones do menu maiores */
+        .nav-item .material-symbols-outlined { font-size: 22px; } 
 
         /* Rodapé da Sidebar (Usuário) */
         .sidebar-footer {
@@ -232,8 +232,9 @@
                 
                 <!-- Operacional -->
                 <div class="nav-category">Operacional</div>
-                <a href="Supervisor_Ure.html" class="nav-item">
-                    <span class="material-symbols-outlined">smartphone</span> Coletor (App)
+                <!-- LINK ATUALIZADO PARA SUPERVISOR APP -->
+                <a href="https://sor-seintec.github.io/Supervisor_ESE/index.html?admin=true" target="_blank" class="nav-item">
+                    <span class="material-symbols-outlined">smartphone</span> Supervisor (App)
                 </a>
                 <a href="kanban.html?admin=true" class="nav-item" id="linkKanbanSide">
                     <span class="material-symbols-outlined">view_kanban</span> Kanban
@@ -288,10 +289,11 @@
         <div class="grid-section-title">Operação e Campo</div>
         <div class="modules-grid">
             
-            <a href="Supervisor_Ure.html" class="module-card">
+            <!-- CARTÃO ATUALIZADO PARA SUPERVISOR APP -->
+            <a href="https://sor-seintec.github.io/Supervisor_ESE/index.html?admin=true" target="_blank" class="module-card">
                 <div class="module-header">
                     <div class="module-icon ic-blue"><span class="material-symbols-outlined">smartphone</span></div>
-                    <h2 class="module-title">Coletor de Vistoria</h2>
+                    <h2 class="module-title">Supervisor (App)</h2>
                 </div>
                 <p class="module-desc">Registro de visitas nas escolas e envio de dados para o banco.</p>
             </a>
