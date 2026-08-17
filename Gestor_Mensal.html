@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor Mensal - Portal URE</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --primary: #0a56d1;
+
+            /* Sistema de Cores Oficial URE */
+            --c-planejado: #f97316;
+            /* Laranja (P) */
+            --c-visitado: #10b981;
+            /* Verde (V) */
+            --c-justificado: #3b82f6;
+            /* Azul (J) */
+            --c-adiado: #9333ea;
+            /* Roxo (A) */
+            --c-cancelado: #ef4444;
+            /* Vermelho (C) */
+
+            --radius: 10px;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 12px;
+            min-height: 100vh;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        /* CABEÇALHO COMPACTADO */
+        .header-panel {
+            background: var(--surface);
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-back {
+            padding: 6px 10px;
+            background: #f1f5f9;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            transition: 0.2s;
+        }
+
+        .btn-back:hover {
+            background: #e2e8f0;
+        }
+
+        .header-titles h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            margin: 0 0 2px 0;
+            color: var(--text-dark);
+        }
+
+        .header-titles p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .filters {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            color: var(--text-dark);
+            background: #f8fafc;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            padding: 8px 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* GRID DOS KPIS REDUZIDOS */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .kpi-card {
+            background: var(--surface);
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .kpi-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .kpi-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .c-plan {
+            color: var(--c-planejado);
+        }
+
+        .c-vis {
+            color: var(--c-visitado);
+        }
+
+        .c-jus {
+            color: var(--c-justificado);
+        }
+
+        .c-adi {
+            color: var(--c-adiado);
+        }
+
+        .c-can {
+            color: var(--c-cancelado);
+        }
+
+        /* GRID DO MEIO COMPACTADO */
+        .middle-grid {
+            display: grid;
+            grid-template-columns: 3fr 2fr;
+            /* Gráfico levemente maior que calendário */
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        @media (max-width: 900px) {
+            .middle-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel-card {
+            background: var(--surface);
+            padding: 16px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin: 0 0 12px 0;
+            color: var(--text-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* GRÁFICO ACHATADO */
+        .chart-container {
+            position: relative;
+            height: 200px;
+            width: 100%;
+        }
+
+        /* CALENDÁRIO COMPACTADO */
+        .cal-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 3px;
+        }
+
+        .cal-day {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: space-between;
+            padding: 2px 4px;
+            font-size: 11px;
+            border-radius: 4px;
+            background: #f8fafc;
+            border: 1px solid transparent;
+            height: 42px;
+            /* Limita a altura */
+        }
+
+        .cal-day.empty {
+            background: transparent;
+        }
+
+        .cal-day.today {
+            border-color: var(--primary);
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .cal-badge {
+            background: var(--c-visitado);
+            color: white;
+            font-size: 8px;
+            font-weight: 700;
+            padding: 1px 4px;
+            border-radius: 3px;
+            align-self: center;
+            margin-bottom: 1px;
+            width: 100%;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* TABELA COMPACTADA */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            padding: 8px 12px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        td {
+            font-size: 13px;
+            font-weight: 500;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-dark);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .sup-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sup-avatar {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .btn-export {
+            background: transparent;
+            border: none;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        #loadingOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            color: var(--primary);
+        }
+
+        #loginScreen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="loginScreen" style="display: none;">
+        <div
+            style="background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center;">
+            <h2 style="margin-top: 0;">Acesso Restrito</h2>
+            <button id="btnGoogleLogin"
+                style="padding: 12px 24px; background: #0a56d1; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Entrar
+                com o Google</button>
+        </div>
+    </div>
+
+    <div id="loadingOverlay">Processando dados...</div>
+
+    <!-- CABEÇALHO COMPACTADO -->
+    <div class="header-panel">
+        <div class="header-left">
+            <a href="index.html" class="btn-back" title="Voltar"><span class="material-symbols-outlined"
+                    style="font-size: 20px;">arrow_back</span></a>
+            <div class="header-titles">
+                <h1>Gestor Mensal</h1>
+                <p>Acompanhamento Analítico de Visitas</p>
+            </div>
+        </div>
+        <div class="filters">
+            <select class="filter-select" id="filtroMes" onchange="processarDados()"></select>
+            <select class="filter-select" id="filtroSup" onchange="processarDados()">
+                <option value="Todos">Supervisor: Todos</option>
+            </select>
+            <button class="btn-primary" onclick="carregarDadosPlanilha()">
+                <span class="material-symbols-outlined" style="font-size: 16px;">refresh</span> Atualizar
+            </button>
+        </div>
+    </div>
+
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="kpi-title">Planejadas</div>
+            <div class="kpi-value c-plan" id="kpiPlan">0</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-title">Visitadas</div>
+            <div class="kpi-value c-vis" id="kpiVis">0</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-title">Justificadas</div>
+            <div class="kpi-value c-jus" id="kpiJus">0</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-title">Adiadas</div>
+            <div class="kpi-value c-adi" id="kpiAdi">0</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-title">Canceladas</div>
+            <div class="kpi-value c-can" id="kpiCan">0</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-title">Taxa de Visitas</div>
+            <div class="kpi-value" id="kpiTaxa" style="color: var(--c-visitado);">0%</div>
+        </div>
+    </div>
+
+    <div class="middle-grid">
+        <div class="panel-card">
+            <div class="panel-title">
+                Visitas vs Planejamento
+                <div style="font-size: 11px; font-weight: 500; display: flex; gap: 8px;">
+                    <span style="display:flex; align-items:center; gap:4px;"><span
+                            style="width:8px;height:8px;background:var(--c-visitado);border-radius:2px;"></span>
+                        Visitadas</span>
+                    <span style="display:flex; align-items:center; gap:4px;"><span
+                            style="width:8px;height:8px;background:var(--c-planejado);border-radius:2px;"></span>
+                        Planejadas</span>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="barChart"></canvas>
+            </div>
+        </div>
+
+        <div class="panel-card">
+            <div class="panel-title">Calendário Mensal</div>
+            <div class="cal-header">
+                <div>Dom</div>
+                <div>Seg</div>
+                <div>Ter</div>
+                <div>Qua</div>
+                <div>Qui</div>
+                <div>Sex</div>
+                <div>Sáb</div>
+            </div>
+            <div class="cal-grid" id="calendarGrid"></div>
+        </div>
+    </div>
+
+    <div class="panel-card" style="margin-bottom: 20px;">
+        <div class="panel-title">
+            Detalhamento por Supervisor
+            <button class="btn-export" onclick="exportarParaCSV()">
+                <span class="material-symbols-outlined" style="font-size: 16px;">download</span> Exportar CSV
+            </button>
+        </div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Supervisor</th>
+                        <th style="text-align:center;">Planejadas</th>
+                        <th style="text-align:center;">Visitadas</th>
+                        <th style="text-align:center;">Justificadas</th>
+                        <th style="text-align:center;">Adiadas</th>
+                        <th style="text-align:center;">Canceladas</th>
+                        <th style="text-align:right;">Taxa de Visitas</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- FIREBASE AUTH -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDs12xgOEPIKu7pNjftNUThM0_-Z0BwoLY",
+            authDomain: "projetoure.firebaseapp.com",
+            projectId: "projetoure",
+            storageBucket: "projetoure.firebasestorage.app",
+            messagingSenderId: "114345231736",
+            appId: "1:114345231736:web:21d610c85bc9843ac4748d"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        document.getElementById('btnGoogleLogin').addEventListener('click', () => {
+            signInWithPopup(auth, new GoogleAuthProvider()).catch(e => alert(e.message));
+        });
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('loginScreen').style.display = 'none';
+                if (!dadosBrutosAgenda || !dadosBrutosVistorias) carregarDadosPlanilha();
+            } else {
+                document.getElementById('loginScreen').style.display = 'flex';
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }
+        });
+    </script>
+
+    <!-- LÓGICA DO DASHBOARD -->
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymq_CP20Qcnp558XV_21FpyrdpYNV12bE9T4MMwvvMYkorgjknw66oJaTjjeR6RGHj/exec';
+
+        let dadosBrutosAgenda = null;
+        let dadosBrutosVistorias = null;
+        let chartInstance = null;
+
+        function parseGoogleDate(dataStr) {
+            if (!dataStr) return null;
+            let str = String(dataStr).trim();
+            if (str.includes('/')) {
+                let partes = str.split(' ')[0].split('/');
+                if (partes.length === 3) return new Date(partes[2], partes[1] - 1, partes[0]);
+            }
+            let d = new Date(str);
+            if (!isNaN(d.getTime())) return d;
+            return null;
+        }
+
+        // LÓGICA DE SEMANA ANUAL (ISO)
+        function getWeekNumber(d) {
+            const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+            const dayNum = date.getUTCDay() || 7;
+            date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+            const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+            return Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+        }
+
+        function inicializarFiltros() {
+            const selectMes = document.getElementById('filtroMes');
+            const mesesNomes = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+            const hoje = new Date();
+            let html = '';
+
+            for (let i = -3; i <= 3; i++) {
+                let d = new Date(hoje.getFullYear(), hoje.getMonth() + i, 1);
+                let mesStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                let label = `Mês: ${mesesNomes[d.getMonth()]}/${d.getFullYear()}`;
+                let isSelected = i === 0 ? 'selected' : '';
+                html += `<option value="${mesStr}" ${isSelected}>${label}</option>`;
+            }
+            selectMes.innerHTML = html;
+        }
+        inicializarFiltros();
+
+        function carregarDadosPlanilha() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            Promise.all([
+                fetch(SCRIPT_URL + '?action=getAgenda').then(res => res.json()),
+                fetch(SCRIPT_URL).then(res => res.json())
+            ])
+                .then(([agenda, vistorias]) => {
+                    dadosBrutosAgenda = agenda;
+                    dadosBrutosVistorias = vistorias;
+
+                    let supers = new Set();
+                    agenda.forEach(i => { if (i.Supervisor) supers.add(i.Supervisor); });
+                    vistorias.forEach(i => { if (i.Supervisor) supers.add(i.Supervisor); });
+
+                    const selectSup = document.getElementById('filtroSup');
+                    let html = '<option value="Todos">Supervisor: Todos</option>';
+                    [...supers].sort().forEach(s => { html += `<option value="${s}">${s}</option>`; });
+                    selectSup.innerHTML = html;
+
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                    processarDados();
+                })
+                .catch(err => {
+                    alert("Erro ao buscar dados.");
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                });
+        }
+
+        function processarDados() {
+            if (!dadosBrutosAgenda || !dadosBrutosVistorias) return;
+
+            const valMes = document.getElementById('filtroMes').value;
+            const anoSelecionado = parseInt(valMes.split('-')[0]);
+            const mesSelecionado = parseInt(valMes.split('-')[1]) - 1;
+            const supSelecionado = document.getElementById('filtroSup').value;
+
+            let agendaFiltrada = dadosBrutosAgenda.filter(i => {
+                let d = parseGoogleDate(i['Data Agendada']);
+                if (!d) return false;
+                let matchMes = d.getFullYear() === anoSelecionado && d.getMonth() === mesSelecionado;
+                let matchSup = supSelecionado === "Todos" || i.Supervisor === supSelecionado;
+                return matchMes && matchSup;
+            });
+
+            let vistFiltradas = dadosBrutosVistorias.filter(i => {
+                let dataKey = Object.keys(i).find(k => k.toLowerCase().includes('visita') || k.toLowerCase().includes('data')) || 'Data da Visita';
+                let d = parseGoogleDate(i[dataKey]);
+                if (!d) return false;
+                let matchMes = d.getFullYear() === anoSelecionado && d.getMonth() === mesSelecionado;
+                let matchSup = supSelecionado === "Todos" || i.Supervisor === supSelecionado;
+                return matchMes && matchSup;
+            });
+
+            let kpiData = { plan: agendaFiltrada.length, vis: 0, jus: 0, adi: 0, can: 0 };
+
+            vistFiltradas.forEach(i => {
+                let st = String(i.Status || '').toLowerCase();
+                if (st.includes('realizada') || st.includes('visitado')) kpiData.vis++;
+                else if (st.includes('justificada')) kpiData.jus++;
+                else if (st.includes('adiada')) kpiData.adi++;
+                else if (st.includes('cancelada')) kpiData.can++;
+            });
+
+            let taxa = kpiData.plan > 0 ? Math.round((kpiData.vis / kpiData.plan) * 100) : 0;
+
+            document.getElementById('kpiPlan').innerText = kpiData.plan;
+            document.getElementById('kpiVis').innerText = kpiData.vis;
+            document.getElementById('kpiJus').innerText = kpiData.jus;
+            document.getElementById('kpiAdi').innerText = kpiData.adi;
+            document.getElementById('kpiCan').innerText = kpiData.can;
+            document.getElementById('kpiTaxa').innerText = taxa + '%';
+            document.getElementById('kpiTaxa').style.color = taxa >= 75 ? "var(--c-visitado)" : "var(--c-cancelado)";
+
+            gerarGraficoECalendario(anoSelecionado, mesSelecionado, agendaFiltrada, vistFiltradas);
+            gerarTabela(agendaFiltrada, vistFiltradas);
+        }
+
+        function gerarGraficoECalendario(ano, mes, agenda, vistorias) {
+            // Mapeia Semanas do Mês
+            let semanasNoMes = [];
+            let weekMap = {};
+            let daysInMonth = new Date(ano, mes + 1, 0).getDate();
+
+            for (let i = 1; i <= daysInMonth; i++) {
+                let d = new Date(ano, mes, i);
+                let w = getWeekNumber(d);
+                if (!semanasNoMes.includes(w)) {
+                    semanasNoMes.push(w);
+                    weekMap[w] = semanasNoMes.length - 1;
+                }
+            }
+
+            let labelsSemanas = semanasNoMes.map(w => 'S' + w);
+            let dadosSemanas = { plan: new Array(semanasNoMes.length).fill(0), vis: new Array(semanasNoMes.length).fill(0) };
+            let countDiasReais = {};
+
+            agenda.forEach(i => {
+                let d = parseGoogleDate(i['Data Agendada']);
+                let w = getWeekNumber(d);
+                if (weekMap[w] !== undefined) dadosSemanas.plan[weekMap[w]]++;
+            });
+
+            vistorias.forEach(i => {
+                let dataKey = Object.keys(i).find(k => k.toLowerCase().includes('visita') || k.toLowerCase().includes('data')) || 'Data da Visita';
+                let st = String(i.Status || '').toLowerCase();
+                if (st.includes('realizada') || st.includes('visitado')) {
+                    let d = parseGoogleDate(i[dataKey]);
+                    let w = getWeekNumber(d);
+                    if (weekMap[w] !== undefined) dadosSemanas.vis[weekMap[w]]++;
+
+                    let diaNum = d.getDate();
+                    countDiasReais[diaNum] = (countDiasReais[diaNum] || 0) + 1;
+                }
+            });
+
+            const ctx = document.getElementById('barChart').getContext('2d');
+            if (chartInstance) chartInstance.destroy();
+
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labelsSemanas, // Usa as labels dinâmicas (ex: S31, S32)
+                    datasets: [
+                        {
+                            label: 'Visitadas',
+                            data: dadosSemanas.vis,
+                            backgroundColor: '#10b981',
+                            borderRadius: 4,
+                            barPercentage: 0.8,
+                            categoryPercentage: 0.8
+                        },
+                        {
+                            label: 'Planejadas',
+                            data: dadosSemanas.plan,
+                            backgroundColor: '#f97316',
+                            borderRadius: 4,
+                            barPercentage: 0.8,
+                            categoryPercentage: 0.8
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#f1f5f9' }, border: { display: false }, ticks: { stepSize: 1, font: { size: 10 } } },
+                        x: { grid: { display: false }, border: { display: false }, ticks: { font: { size: 11 } } }
+                    }
+                }
+            });
+
+            const calGrid = document.getElementById('calendarGrid');
+            calGrid.innerHTML = '';
+
+            let primeiroDiaMes = new Date(ano, mes, 1).getDay();
+            let hoje = new Date();
+            let strHoje = (hoje.getFullYear() === ano && hoje.getMonth() === mes) ? hoje.getDate() : -1;
+
+            for (let i = 0; i < primeiroDiaMes; i++) { calGrid.innerHTML += `<div class="cal-day empty"></div>`; }
+
+            for (let i = 1; i <= daysInMonth; i++) {
+                let isToday = i === strHoje ? 'today' : '';
+                let badge = countDiasReais[i] ? `<div class="cal-badge">${countDiasReais[i]} Visitas</div>` : '';
+                let badgeHoje = isToday && !badge ? `<div class="cal-badge" style="background:var(--c-planejado);">Hoje</div>` : '';
+
+                calGrid.innerHTML += `
+                    <div class="cal-day ${isToday}">
+                        <div style="font-weight:600;">${i}</div>
+                        ${badge || badgeHoje}
+                    </div>
+                `;
+            }
+        }
+
+        function gerarTabela(agenda, vistorias) {
+            let stats = {};
+
+            agenda.forEach(i => {
+                let sup = i.Supervisor || "Desconhecido";
+                if (!stats[sup]) stats[sup] = { plan: 0, vis: 0, jus: 0, adi: 0, can: 0 };
+                stats[sup].plan++;
+            });
+
+            vistorias.forEach(i => {
+                let sup = i.Supervisor || "Desconhecido";
+                if (!stats[sup]) stats[sup] = { plan: 0, vis: 0, jus: 0, adi: 0, can: 0 };
+
+                let st = String(i.Status || '').toLowerCase();
+                if (st.includes('realizada') || st.includes('visitado')) stats[sup].vis++;
+                else if (st.includes('justificada')) stats[sup].jus++;
+                else if (st.includes('adiada')) stats[sup].adi++;
+                else if (st.includes('cancelada')) stats[sup].can++;
+            });
+
+            const tBody = document.getElementById('tableBody');
+            tBody.innerHTML = '';
+
+            Object.keys(stats).sort().forEach(sup => {
+                let s = stats[sup];
+                let taxa = s.plan > 0 ? ((s.vis / s.plan) * 100).toFixed(1) : 0;
+                let taxaCor = taxa >= 75 ? "var(--c-visitado)" : "var(--c-cancelado)";
+                let sigla = sup.substring(0, 2).toUpperCase();
+                let avatarColor = gerarCorHash(sup);
+
+                tBody.innerHTML += `
+                    <tr>
+                        <td>
+                            <div class="sup-name">
+                                <div class="sup-avatar" style="background:${avatarColor}">${sigla}</div>
+                                <span>${sup}</span>
+                            </div>
+                        </td>
+                        <td style="text-align:center; font-weight:700; color:var(--c-planejado);">${s.plan}</td>
+                        <td style="text-align:center; font-weight:700; color:var(--c-visitado);">${s.vis}</td>
+                        <td style="text-align:center; font-weight:600; color:var(--c-justificado);">${s.jus}</td>
+                        <td style="text-align:center; font-weight:600; color:var(--c-adiado);">${s.adi}</td>
+                        <td style="text-align:center; font-weight:600; color:var(--c-cancelado);">${s.can}</td>
+                        <td style="text-align:right; font-weight:700; color:${taxaCor};">${taxa}%</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function gerarCorHash(str) {
+            let colors = ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'];
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            return colors[Math.abs(hash) % colors.length];
+        }
+
+        window.exportarParaCSV = function () {
+            let csv = "Supervisor;Planejadas;Visitadas;Justificadas;Adiadas;Canceladas;Taxa de Visitas\n";
+            let linhas = document.querySelectorAll('#tableBody tr');
+
+            linhas.forEach(linha => {
+                let colunas = linha.querySelectorAll('td');
+                let rowData = Array.from(colunas).map(c => c.innerText.trim());
+                rowData[0] = rowData[0].substring(3).trim();
+                csv += rowData.join(';') + "\n";
+            });
+
+            let blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+            let link = document.createElement("a");
+            let url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", `GestorTracker_URE_${document.getElementById('filtroMes').value}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+
+</html>
