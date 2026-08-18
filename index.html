@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal URE - Visão Geral</title>
+    <title>Portal URE - Central de Gestão</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <style>
@@ -68,59 +67,112 @@
             border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; margin-top: 5px;
         }
 
-        /* ================= BARRA LATERAL (SIDEBAR) AUMENTADA ================= */
+        /* ================= BARRA LATERAL (SIDEBAR RETRÁTIL) ================= */
         .sidebar {
             width: 280px; 
             background-color: var(--bg-sidebar);
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            padding: 24px 20px; 
+            padding: 24px 16px; 
             flex-shrink: 0;
             justify-content: space-between;
+            transition: width 0.3s ease, padding 0.3s ease;
+            position: relative;
         }
+
+        /* Estado Retraído do Menu */
+        .sidebar.collapsed {
+            width: 76px;
+            padding: 24px 10px;
+        }
+        .sidebar.collapsed .logo-text,
+        .sidebar.collapsed .nav-category,
+        .sidebar.collapsed .nav-item span:not(.material-symbols-outlined),
+        .sidebar.collapsed .user-info,
+        .sidebar.collapsed .action-icons {
+            display: none !important;
+        }
+        .sidebar.collapsed .logo-area {
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+        .sidebar.collapsed .nav-item {
+            justify-content: center;
+            padding: 12px;
+        }
+        .sidebar.collapsed .sidebar-footer {
+            justify-content: center;
+        }
+
+        /* Botão Retrátil (>> / <<) */
+        .btn-toggle-sidebar {
+            position: absolute;
+            top: 24px;
+            right: -12px;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            z-index: 100;
+            color: var(--text-muted);
+            transition: 0.2s;
+        }
+        .btn-toggle-sidebar:hover { background: #f1f5f9; color: var(--text-dark); }
 
         .logo-area {
-            display: flex; align-items: center; gap: 12px; margin-bottom: 35px; padding: 0 8px;
+            display: flex; align-items: center; gap: 12px; margin-bottom: 25px; padding: 0 4px;
         }
-        .logo-area .material-symbols-outlined { font-size: 32px; color: var(--primary); } 
-        .logo-text h2 { font-family: 'Outfit', sans-serif; font-size: 22px; margin: 0; color: var(--text-dark); } 
-        .logo-text span { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+        .logo-area .material-symbols-outlined { font-size: 32px; color: var(--primary); flex-shrink: 0; } 
+        .logo-text { overflow: hidden; white-space: nowrap; }
+        .logo-text h2 { font-family: 'Outfit', sans-serif; font-size: 20px; margin: 0; color: var(--text-dark); } 
+        .logo-text span { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
 
-        .nav-menu { display: flex; flex-direction: column; gap: 6px; } 
+        .nav-menu { display: flex; flex-direction: column; gap: 4px; overflow-y: auto; max-height: calc(100vh - 200px); } 
+        .nav-menu::-webkit-scrollbar { width: 4px; }
+        .nav-menu::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         
         .nav-category {
-            margin: 20px 0 8px 12px;
-            font-size: 12px;
+            margin: 16px 0 6px 12px;
+            font-size: 11px;
             font-weight: 700;
             color: #94a3b8;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            white-space: nowrap;
         }
 
         .nav-item {
-            display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-radius: var(--radius-md);
-            color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 15px; transition: 0.2s; 
+            display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--radius-md);
+            color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 14px; transition: 0.2s; 
+            white-space: nowrap;
         }
         .nav-item:hover { background-color: #f8fafc; color: var(--text-dark); }
         .nav-item.active { background-color: var(--sidebar-active); color: var(--sidebar-active-txt); font-weight: 600; }
-        .nav-item .material-symbols-outlined { font-size: 22px; } 
+        .nav-item .material-symbols-outlined { font-size: 20px; flex-shrink: 0; } 
 
-        /* Rodapé da Sidebar (Usuário) */
+        /* Rodapé da Sidebar */
         .sidebar-footer {
             border-top: 1px solid var(--border);
-            padding-top: 16px;
+            padding-top: 12px;
             display: flex;
             align-items: center;
             gap: 10px;
+            overflow: hidden;
         }
         .user-avatar {
-            width: 36px; height: 36px; border-radius: 50%; background: #0f172a; color: white;
-            display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0;
+            width: 34px; height: 34px; border-radius: 50%; background: #0f172a; color: white;
+            display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0;
         }
-        .user-info { flex: 1; overflow: hidden; }
-        .user-email { font-size: 13px; font-weight: 600; color: var(--text-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .user-role { font-size: 11px; color: var(--text-muted); }
+        .user-info { flex: 1; overflow: hidden; white-space: nowrap; }
+        .user-email { font-size: 12px; font-weight: 600; color: var(--text-dark); overflow: hidden; text-overflow: ellipsis; }
+        .user-role { font-size: 10px; color: var(--text-muted); }
         
         .action-icons { display: flex; gap: 4px; }
         .icon-btn { 
@@ -130,11 +182,29 @@
         .icon-btn:hover { background: #f1f5f9; color: var(--text-dark); }
         .icon-btn.logout:hover { color: var(--red); background: #fee2e2; }
 
-        /* ================= ÁREA PRINCIPAL ================= */
+        /* ================= ÁREA PRINCIPAL E IFRAME ================= */
         .main-content {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-main);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Container do Iframe / Dashboard */
+        #contentFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: var(--bg-main);
+        }
+
+        /* Conteúdo Inicial (Visão Geral com os Cards) */
+        #homeView {
+            flex: 1;
             overflow-y: auto;
-            padding: 30px 40px; 
+            padding: 30px 40px;
             display: flex;
             flex-direction: column;
             gap: 24px;
@@ -143,7 +213,6 @@
         .page-header h1 { font-family: 'Outfit', sans-serif; font-size: 28px; margin: 0 0 6px 0; color: var(--text-dark); }
         .page-header p { margin: 0; color: var(--text-muted); font-size: 14px; }
 
-        /* GRID DE CARTÕES */
         .grid-section-title {
             font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; 
             letter-spacing: 0.5px; margin: 0 0 12px 0; border-bottom: 1px solid var(--border); padding-bottom: 8px;
@@ -153,7 +222,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); 
             gap: 16px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .module-card {
@@ -167,6 +236,7 @@
             color: inherit;
             transition: 0.2s;
             box-shadow: var(--shadow-sm);
+            cursor: pointer;
         }
         .module-card:hover {
             box-shadow: 0 6px 16px -4px rgba(0,0,0,0.1);
@@ -182,18 +252,14 @@
         .module-title { font-size: 16px; font-weight: 700; color: var(--text-dark); margin: 0; }
         .module-desc { font-size: 13.5px; color: var(--text-muted); line-height: 1.4; margin: 0; flex: 1; }
 
-        /* Cores dos Ícones */
         .ic-blue { background: #eff6ff; color: var(--c-blue); }
         .ic-green { background: #ecfdf5; color: var(--c-green); }
         .ic-red { background: #fef2f2; color: var(--c-red); }
         .ic-purple { background: #f5f3ff; color: var(--c-purple); }
         .ic-orange { background: #fff7ed; color: var(--c-orange); }
         .ic-teal { background: #f0fdfa; color: var(--c-teal); }
-
     </style>
-<!-- Code injected by Five-server -->
-  <script async data-id="five-server" data-file="c:\Users\angel\Downloads\gemini-code-1786991065291.html" type="application/javascript" src="/fiveserver.js"></script>
-  </head>
+</head>
 <body>
 
     <!-- TELA DE LOGIN FIREBASE -->
@@ -216,8 +282,12 @@
         </div>
     </div>
 
-    <!-- BARRA LATERAL (SIDEBAR) -->
-    <aside class="sidebar">
+    <!-- BARRA LATERAL (SIDEBAR) COM BOTÃO DE RECOLHER -->
+    <aside class="sidebar" id="sidebar">
+        <button class="btn-toggle-sidebar" id="btnToggle" onclick="toggleSidebar()" title="Recolher / Expandir Menu">
+            <span class="material-symbols-outlined" id="toggleIcon" style="font-size: 16px;">chevron_left</span>
+        </button>
+
         <div>
             <div class="logo-area">
                 <span class="material-symbols-outlined">shield_person</span>
@@ -228,42 +298,46 @@
             </div>
 
             <nav class="nav-menu">
-                <!-- A Própria página -->
-                <a href="#" class="nav-item active">
-                    <span class="material-symbols-outlined">grid_view</span> Visão Geral
+                <a href="#" class="nav-item active" onclick="carregarPagina(event, 'home', this)">
+                    <span class="material-symbols-outlined">grid_view</span> <span>Visão Geral</span>
                 </a>
                 
                 <!-- Operacional -->
                 <div class="nav-category">Operacional</div>
-                <!-- LINK ATUALIZADO PARA SUPERVISOR APP -->
                 <a href="https://sor-seintec.github.io/Supervisor_ESE/index.html?admin=true" target="_blank" class="nav-item">
-                    <span class="material-symbols-outlined">smartphone</span> Supervisor (App)
-                </a>
-                <a href="kanban.html?admin=true" class="nav-item" id="linkKanbanSide">
-                    <span class="material-symbols-outlined">view_kanban</span> Kanban
+                    <span class="material-symbols-outlined">smartphone</span> <span>Supervisor (App)</span>
                 </a>
 
                 <!-- Analítico -->
                 <div class="nav-category">Analítico</div>
-                <a href="Fiscalizacao.html" class="nav-item">
-                    <span class="material-symbols-outlined">shield</span> Fiscalização
+                <a href="BM.html" class="nav-item" onclick="carregarPagina(event, 'BM.html', this)">
+                    <span class="material-symbols-outlined">calendar_month</span> <span>Mensal</span>
                 </a>
-                <a href="Dashboard_Performance.html" class="nav-item">
-                    <span class="material-symbols-outlined">insert_chart</span> Tracker Diário
+                <a href="Fiscalizacao.html" class="nav-item" onclick="carregarPagina(event, 'Fiscalizacao.html', this)">
+                    <span class="material-symbols-outlined">shield</span> <span>Fiscalização</span>
                 </a>
-                <a href="Gestor_Mensal.html" class="nav-item">
-                    <span class="material-symbols-outlined">event_note</span> Gestor Mensal
+                <a href="BMC.html" class="nav-item" onclick="carregarPagina(event, 'BMC.html', this)">
+                    <span class="material-symbols-outlined">insert_chart</span> <span>Metas</span>
+                </a>
+                <a href="BE.html" class="nav-item" onclick="carregarPagina(event, 'BE.html', this)">
+                    <span class="material-symbols-outlined">school</span> <span>Escolas</span>
+                </a>
+                <a href="Gestor_Mensal.html" class="nav-item" onclick="carregarPagina(event, 'Gestor_Mensal.html', this)">
+                    <span class="material-symbols-outlined">event_note</span> <span>Gestor Mensal</span>
+                </a>
+                <a href="gestor_kanban.html" class="nav-item" onclick="carregarPagina(event, 'gestor_kanban.html', this)">
+                    <span class="material-symbols-outlined">analytics</span> <span>Gestor Kanban</span>
                 </a>
                 
-                <!-- Externo -->
+                <!-- Específico -->
                 <div class="nav-category">Específico</div>
                 <a href="https://sor-seintec.github.io/Supervisor_ESE/index.html" class="nav-item" target="_blank">
-                    <span class="material-symbols-outlined">assignment_ind</span> Equipe ESE
+                    <span class="material-symbols-outlined">assignment_ind</span> <span>Equipe ESE</span>
                 </a>
             </nav>
         </div>
 
-        <!-- RODAPÉ DA SIDEBAR (Usuário) -->
+        <!-- RODAPÉ DA SIDEBAR -->
         <div class="sidebar-footer">
             <div class="user-avatar" id="userAvatar">--</div>
             <div class="user-info">
@@ -281,84 +355,83 @@
         </div>
     </aside>
 
-    <!-- ÁREA PRINCIPAL -->
+    <!-- ÁREA PRINCIPAL DINÂMICA -->
     <main class="main-content">
-        <header class="page-header">
-            <h1>Visão Geral</h1>
-            <p>Selecione um dos módulos abaixo para gerenciar as rotinas da URE.</p>
-        </header>
+        <!-- Visão Inicial (Cards) -->
+        <div id="homeView">
+            <header class="page-header">
+                <h1>Visão Geral</h1>
+                <p>Selecione um dos módulos abaixo ou navegue pelo menu lateral.</p>
+            </header>
 
-        <!-- SEÇÃO: OPERAÇÃO E CAMPO -->
-        <div class="grid-section-title">Operação e Campo</div>
-        <div class="modules-grid">
-            
-            <!-- CARTÃO ATUALIZADO PARA SUPERVISOR APP -->
-            <a href="https://sor-seintec.github.io/Supervisor_ESE/index.html?admin=true" target="_blank" class="module-card">
-                <div class="module-header">
-                    <div class="module-icon ic-blue"><span class="material-symbols-outlined">smartphone</span></div>
-                    <h2 class="module-title">Supervisor (App)</h2>
+            <div class="grid-section-title">Operacional</div>
+            <div class="modules-grid">
+                <a href="https://sor-seintec.github.io/Supervisor_ESE/index.html?admin=true" target="_blank" class="module-card">
+                    <div class="module-header">
+                        <div class="module-icon ic-blue"><span class="material-symbols-outlined">smartphone</span></div>
+                        <h2 class="module-title">Supervisor (App)</h2>
+                    </div>
+                    <p class="module-desc">Registro de visitas nas escolas e envio de dados para o banco.</p>
+                </a>
+            </div>
+
+            <div class="grid-section-title">Analítico</div>
+            <div class="modules-grid">
+                <div class="module-card" onclick="carregarPaginaPorUrl('BM.html')">
+                    <div class="module-header">
+                        <div class="module-icon ic-red"><span class="material-symbols-outlined">calendar_month</span></div>
+                        <h2 class="module-title">Mensal</h2>
+                    </div>
+                    <p class="module-desc">Visão mensal consolidada dos registros e acompanhamentos da equipe.</p>
                 </div>
-                <p class="module-desc">Registro de visitas nas escolas e envio de dados para o banco.</p>
-            </a>
 
-            <a href="kanban.html?admin=true" class="module-card" id="linkKanbanCard">
-                <div class="module-header">
-                    <div class="module-icon ic-red"><span class="material-symbols-outlined">calendar_month</span></div>
-                    <h2 class="module-title">Kanban Operacional</h2>
+                <div class="module-card" onclick="carregarPaginaPorUrl('Fiscalizacao.html')">
+                    <div class="module-header">
+                        <div class="module-icon ic-teal"><span class="material-symbols-outlined">shield</span></div>
+                        <h2 class="module-title">Filtro Fiscalização</h2>
+                    </div>
+                    <p class="module-desc">Extração de estatísticas baseada em filtros de escolas, datas e ações.</p>
                 </div>
-                <p class="module-desc">Agendamento semanal e organização interativa das metas da equipe.</p>
-            </a>
 
-            <a href="https://sor-seintec.github.io/Supervisor_ESE/index.html" class="module-card" target="_blank">
-                <div class="module-header">
-                    <div class="module-icon ic-orange"><span class="material-symbols-outlined">assignment_ind</span></div>
-                    <h2 class="module-title">Supervisor ESE</h2>
+                <div class="module-card" onclick="carregarPaginaPorUrl('BMC.html')">
+                    <div class="module-header">
+                        <div class="module-icon ic-green"><span class="material-symbols-outlined">insert_chart</span></div>
+                        <h2 class="module-title">Metas/Contestações</h2>
+                    </div>
+                    <p class="module-desc">Acompanhamento de metas diárias e gestão de produtividade.</p>
                 </div>
-                <p class="module-desc">Ambiente exclusivo para registros e rotinas oficiais da equipe ESE.</p>
-            </a>
+                
+                <div class="module-card" onclick="carregarPaginaPorUrl('BE.html')">
+                    <div class="module-header">
+                        <div class="module-icon ic-orange"><span class="material-symbols-outlined">school</span></div>
+                        <h2 class="module-title">Escolas</h2>
+                    </div>
+                    <p class="module-desc">Gestão e acompanhamento focado nos indicadores de cada escola.</p>
+                </div>
 
+                <div class="module-card" onclick="carregarPaginaPorUrl('Gestor_Mensal.html')">
+                    <div class="module-header">
+                        <div class="module-icon ic-purple"><span class="material-symbols-outlined">event_note</span></div>
+                        <h2 class="module-title">Gestor Mensal</h2>
+                    </div>
+                    <p class="module-desc">Análise de desempenho e consolidação de dados para fechamento do mês.</p>
+                </div>
+
+                <div class="module-card" onclick="carregarPaginaPorUrl('gestor_kanban.html')">
+                    <div class="module-header">
+                        <div class="module-icon ic-blue"><span class="material-symbols-outlined">analytics</span></div>
+                        <h2 class="module-title">Gestor Kanban</h2>
+                    </div>
+                    <p class="module-desc">Visão analítica gerencial macro do fluxo de trabalho das escolas.</p>
+                </div>
+            </div>
         </div>
 
-        <!-- SEÇÃO: ESTATÍSTICAS E AUDITORIA -->
-        <div class="grid-section-title">Estatísticas e Auditoria</div>
-        <div class="modules-grid">
-
-            <a href="Fiscalizacao.html" class="module-card">
-                <div class="module-header">
-                    <div class="module-icon ic-teal"><span class="material-symbols-outlined">shield</span></div>
-                    <h2 class="module-title">Filtro Fiscalização</h2>
-                </div>
-                <p class="module-desc">Extração de estatísticas baseada em filtros de escolas, datas e ações.</p>
-            </a>
-
-            <a href="Dashboard_Performance.html" class="module-card">
-                <div class="module-header">
-                    <div class="module-icon ic-green"><span class="material-symbols-outlined">insert_chart</span></div>
-                    <h2 class="module-title">Tracker Diário</h2>
-                </div>
-                <p class="module-desc">Métricas visuais de desempenho cruzando o Planejado vs Visitado.</p>
-            </a>
-
-            <a href="Gestor_Mensal.html" class="module-card">
-                <div class="module-header">
-                    <div class="module-icon ic-purple"><span class="material-symbols-outlined">event_note</span></div>
-                    <h2 class="module-title">Gestor Mensal</h2>
-                </div>
-                <p class="module-desc">Análise de desempenho e consolidação de dados para fechamento do mês.</p>
-            </a>
-
-            <a href="gestor_kanban.html" class="module-card">
-                <div class="module-header">
-                    <div class="module-icon ic-blue"><span class="material-symbols-outlined">analytics</span></div>
-                    <h2 class="module-title">Gestor Kanban</h2>
-                </div>
-                <p class="module-desc">Visão analítica gerencial macro do fluxo de trabalho das escolas.</p>
-            </a>
-
-        </div>
+        <!-- IFRAME ONDE AS PÁGINAS VÃO ABRIR -->
+        <iframe id="contentFrame" style="display: none;" name="contentFrame"></iframe>
     </main>
 
-    <!-- FIREBASE AUTH LOGIC -->
+    <!-- LÓGICA DE NAVEGAÇÃO E AUTH -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -375,7 +448,6 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         
-        // Verifica se é admin pela URL
         const urlParams = new URLSearchParams(window.location.search);
         const isAdmin = urlParams.get('admin') === 'true';
         if(isAdmin) {
@@ -395,7 +467,6 @@
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('loginScreen').style.display = 'none';
-                
                 let email = user.email || (user.providerData[0] && user.providerData[0].email) || "AD";
                 document.getElementById('userEmailDisplay').textContent = email;
 
@@ -407,7 +478,6 @@
                     initials = nameParts[0].substring(0, 2).toUpperCase();
                 }
                 document.getElementById('userAvatar').textContent = initials;
-
             } else {
                 document.getElementById('loginScreen').style.display = 'flex';
             }
@@ -417,6 +487,61 @@
             if(confirm("Deseja realmente sair do sistema?")) {
                 signOut(auth).catch(error => alert("Erro ao sair."));
             }
+        }
+    </script>
+
+    <!-- SCRIPT DO MENU RETRÁTIL E CARREGAMENTO DE PÁGINAS -->
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const icon = document.getElementById('toggleIcon');
+            sidebar.classList.toggle('collapsed');
+            
+            if (sidebar.classList.contains('collapsed')) {
+                icon.textContent = 'chevron_right'; // ícone >>
+            } else {
+                icon.textContent = 'chevron_left'; // ícone <<
+            }
+        }
+
+        function carregarPagina(event, url, element) {
+            if (url === 'home') {
+                event.preventDefault();
+                document.getElementById('homeView').style.display = 'flex';
+                document.getElementById('contentFrame').style.display = 'none';
+                document.getElementById('contentFrame').src = '';
+                
+                // Atualiza classe ativa no menu
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                element.classList.add('active');
+                return;
+            }
+
+            event.preventDefault();
+            document.getElementById('homeView').style.display = 'none';
+            
+            const frame = document.getElementById('contentFrame');
+            frame.style.display = 'block';
+            frame.src = url;
+
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            if(element) element.classList.add('active');
+        }
+
+        function carregarPaginaPorUrl(url) {
+            document.getElementById('homeView').style.display = 'none';
+            const frame = document.getElementById('contentFrame');
+            frame.style.display = 'block';
+            frame.src = url;
+
+            // Encontra o item correspondente no menu lateral e ativa
+            document.querySelectorAll('.nav-item').forEach(el => {
+                if(el.getAttribute('onclick') && el.getAttribute('onclick').includes(url)) {
+                    el.classList.add('active');
+                } else {
+                    el.classList.remove('active');
+                }
+            });
         }
     </script>
 </body>
