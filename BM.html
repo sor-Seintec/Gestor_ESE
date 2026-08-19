@@ -545,9 +545,67 @@
       margin-bottom: 18px
     }
 
+    .calendar-panel .panel-head {
+      position: relative;
+      padding-bottom: 27px
+    }
+
+    .calendar-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 14px;
+      flex-wrap: wrap
+    }
+
+    .calendar-toggle {
+      position: absolute;
+      left: 50%;
+      bottom: 2px;
+      width: 56px;
+      height: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transform: translateX(-50%);
+      border: 0;
+      background: transparent;
+      color: var(--theme-dark)
+    }
+
+    .calendar-toggle span {
+      width: 9px;
+      height: 9px;
+      margin: -3px;
+      border-right: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      transform: rotate(45deg)
+    }
+
+    .calendar-panel.is-expanded .calendar-toggle span {
+      transform: rotate(225deg)
+    }
+
+    .calendar-toggle:hover {
+      color: var(--ink);
+      transform: translateX(-50%) translateY(2px)
+    }
+
+    .calendar-toggle:focus-visible {
+      outline: 2px solid var(--theme-dark);
+      outline-offset: 1px;
+      border-radius: 7px
+    }
+
     .calendar-scroll {
+      display: none;
       overflow-x: auto;
       padding: 0 18px 18px
+    }
+
+    .calendar-panel.is-expanded .calendar-scroll {
+      display: block
     }
 
     .calendar {
@@ -916,6 +974,11 @@
         align-items: flex-start;
         flex-direction: column
       }
+
+      .calendar-actions {
+        width: 100%;
+        justify-content: flex-start
+      }
     }
   </style>
 </head>
@@ -1032,14 +1095,19 @@
         </div>
       </article>
     </section>
-    <article class="panel calendar-panel">
+    <article class="panel calendar-panel" id="calendarPanel">
       <header class="panel-head">
         <div>
           <h2>Calendário mensal</h2>
           <p>Total diário de visitas planejadas e realizadas nas escolas.</p>
         </div>
-        <div class="legend"><span><i style="--legend:var(--planned)"></i>Planejadas</span><span><i
-              style="--legend:var(--visited)"></i>Visitadas</span></div>
+        <div class="calendar-actions">
+          <div class="legend"><span><i style="--legend:var(--planned)"></i>Planejadas</span><span><i
+                style="--legend:var(--visited)"></i>Visitadas</span></div>
+          <button class="calendar-toggle" id="calendarToggle" type="button" aria-controls="calendarGrid"
+            aria-expanded="false" aria-label="Expandir calendário" title="Expandir calendário"><span
+              aria-hidden="true"></span><span aria-hidden="true"></span></button>
+        </div>
       </header>
       <div class="calendar-scroll">
         <div class="calendar">
@@ -1125,7 +1193,7 @@
     async function loadData() { const loading = $('loading'), error = $('errorMessage'); loading.hidden = false; error.classList.remove('is-visible'); try { const [agendaData, visitData] = await Promise.all([fetchJson(`${SCRIPT_URL}?action=getAgenda`), fetchJson(`${SCRIPT_URL}?action=getFiltros`).catch(() => fetchJson(SCRIPT_URL))]); agendaRaw = agendaData; visitsRaw = visitData; normalizeData(); fillFilters(); processData() } catch (reason) { console.error(reason); error.textContent = 'Não foi possível consultar a agenda e as visitas. Verifique a conexão com o banco.'; error.classList.add('is-visible') } finally { loading.hidden = true } }
     function csvValue(value) { return `"${norm(value).replace(/"/g, '""').replace(/[\r\n]+/g, ' ')}"` }
     function exportAnalysis() { const lines = [['ANÁLISE POR ESCOLA'], ['Escola', 'Planejadas', 'Visitadas', 'Justificadas', 'Adiadas', 'Canceladas', 'Lacuna', 'Taxa', 'Cenário', 'Última visita'], ...schoolStats.map(item => { const rate = item.planned ? Math.round(item.visited / item.planned * 100) : 0; return [item.name, item.planned, item.visited, item.justified, item.postponed, item.cancelled, Math.max(item.planned - item.visited, 0), `${rate}%`, schoolScenario(item).label, formatDate(item.lastVisit)] })]; const blob = new Blob([`\uFEFF${lines.map(line => line.map(csvValue).join(';')).join('\n')}`], { type: 'text/csv;charset=utf-8' }), url = URL.createObjectURL(blob), link = document.createElement('a'); link.href = url; link.download = `Visitas_Planejamento_${$('monthFilter').value}.csv`; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000) }
-    $('monthFilter').addEventListener('change', processData); $('schoolFilter').addEventListener('change', processData); $('refreshButton').addEventListener('click', loadData); $('exportButton').addEventListener('click', exportAnalysis); initMonths(); window.loadBMData = loadData;
+    $('monthFilter').addEventListener('change', processData); $('schoolFilter').addEventListener('change', processData); $('refreshButton').addEventListener('click', loadData); $('exportButton').addEventListener('click', exportAnalysis); $('calendarToggle').addEventListener('click', () => { const panel = $('calendarPanel'), button = $('calendarToggle'), expanded = panel.classList.toggle('is-expanded'), label = expanded ? 'Recolher calendário' : 'Expandir calendário'; button.setAttribute('aria-expanded', String(expanded)); button.setAttribute('aria-label', label); button.title = label }); initMonths(); window.loadBMData = loadData;
   </script>
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js'; import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
