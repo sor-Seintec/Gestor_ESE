@@ -82,8 +82,9 @@
     }
 
     .page {
-      width: min(1540px, 100%);
-      margin: auto;
+      width: 100%;
+      max-width: none;
+      margin: 0;
       padding: 28px clamp(16px, 3.4vw, 48px) 48px
     }
 
@@ -99,18 +100,6 @@
       display: flex;
       align-items: center;
       gap: 14px
-    }
-
-    .back {
-      width: 42px;
-      height: 42px;
-      display: grid;
-      place-items: center;
-      border: 1px solid color-mix(in srgb, var(--theme-dark) 22%, #fff);
-      border-radius: 13px;
-      background: #fff;
-      color: var(--theme-dark);
-      font-size: 21px
     }
 
     .eyebrow {
@@ -907,11 +896,6 @@
         align-items: flex-start
       }
 
-      .back {
-        width: 38px;
-        height: 38px
-      }
-
       .filters {
         grid-template-columns: 1fr
       }
@@ -952,8 +936,7 @@
   </div>
   <main class="page">
     <header class="topbar">
-      <div class="title-group"><button class="back" id="backButton" type="button"
-          aria-label="Voltar ao portal">←</button>
+      <div class="title-group">
         <div><span class="eyebrow">GESTÃO 360°</span>
           <h1>Escolas planejamento</h1>
           <p class="top-note">Planejamento, metas e cobertura das escolas no período.</p>
@@ -1142,7 +1125,7 @@
     async function loadData() { const loading = $('loading'), error = $('errorMessage'); loading.hidden = false; error.classList.remove('is-visible'); try { const [agendaData, visitData] = await Promise.all([fetchJson(`${SCRIPT_URL}?action=getAgenda`), fetchJson(`${SCRIPT_URL}?action=getFiltros`).catch(() => fetchJson(SCRIPT_URL))]); agendaRaw = agendaData; visitsRaw = visitData; normalizeData(); fillFilters(); processData() } catch (reason) { console.error(reason); error.textContent = 'Não foi possível consultar a agenda e as visitas. Verifique a conexão com o banco.'; error.classList.add('is-visible') } finally { loading.hidden = true } }
     function csvValue(value) { return `"${norm(value).replace(/"/g, '""').replace(/[\r\n]+/g, ' ')}"` }
     function exportAnalysis() { const lines = [['ANÁLISE POR ESCOLA'], ['Escola', 'Planejadas', 'Visitadas', 'Justificadas', 'Adiadas', 'Canceladas', 'Lacuna', 'Taxa', 'Cenário', 'Última visita'], ...schoolStats.map(item => { const rate = item.planned ? Math.round(item.visited / item.planned * 100) : 0; return [item.name, item.planned, item.visited, item.justified, item.postponed, item.cancelled, Math.max(item.planned - item.visited, 0), `${rate}%`, schoolScenario(item).label, formatDate(item.lastVisit)] })]; const blob = new Blob([`\uFEFF${lines.map(line => line.map(csvValue).join(';')).join('\n')}`], { type: 'text/csv;charset=utf-8' }), url = URL.createObjectURL(blob), link = document.createElement('a'); link.href = url; link.download = `Visitas_Planejamento_${$('monthFilter').value}.csv`; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000) }
-    $('backButton').addEventListener('click', () => { if (window.parent !== window && window.parent.portalNavigate) window.parent.portalNavigate('home'); else location.href = 'index.html' }); $('monthFilter').addEventListener('change', processData); $('schoolFilter').addEventListener('change', processData); $('refreshButton').addEventListener('click', loadData); $('exportButton').addEventListener('click', exportAnalysis); initMonths(); window.loadBMData = loadData;
+    $('monthFilter').addEventListener('change', processData); $('schoolFilter').addEventListener('change', processData); $('refreshButton').addEventListener('click', loadData); $('exportButton').addEventListener('click', exportAnalysis); initMonths(); window.loadBMData = loadData;
   </script>
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js'; import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
